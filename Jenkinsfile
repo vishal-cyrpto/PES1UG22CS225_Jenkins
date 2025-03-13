@@ -6,7 +6,7 @@ pipeline {
             steps {
                 echo 'Building the new program...'
                 // Compiling the new cpp file in the root directory
-                sh 'g++ -o hello hello.cpp'
+                sh 'g++ -o hello hello321.cpp'
                 // Building YOUR_SRN-1 job
                 build 'PES1UG22CS225-1'
             }
