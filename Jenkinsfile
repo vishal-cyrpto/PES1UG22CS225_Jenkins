@@ -4,9 +4,9 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo 'Building...'
-                // Compiling the cpp file
-                sh 'g++ -o main/hello_exec main/hello.cpp'
+                echo 'Building the new program...'
+                // Compiling the new cpp file in the root directory
+                sh 'g++ -o hello hello.cpp'
                 // Building YOUR_SRN-1 job
                 build 'PES1UG22CS225-1'
             }
@@ -14,32 +14,40 @@ pipeline {
         
         stage('Test') {
             steps {
-                echo 'Testing...'
-                // Print output of the cpp file
-                sh 'cd main && ./hello_exec'
+                echo 'Testing the new program...'
+                // Print output of the new cpp file
+                sh './hello > output.txt'
+                sh 'cat output.txt'
+                echo 'Test completed successfully!'
             }
         }
         
         stage('Deploy') {
             steps {
-                echo 'Deploying...'
+                echo 'Starting deployment process...'
                 sh '''
-                    echo "Deployment would happen here in a real environment"
-                    echo "Application successfully deployed!"
+                    echo "Creating deployment package..."
+                    mkdir -p deploy
+                    cp hello deploy/
+                    cp output.txt deploy/
+                    echo "Deployment package created successfully!"
+                    echo "In a real environment, this would be deployed to production servers."
                 '''
+                echo 'Deployment completed successfully!'
             }
         }
     }
     
     post {
         success {
-            echo 'Pipeline executed successfully!'
+            echo 'Pipeline executed successfully! All stages passed.'
         }
         failure {
-            echo 'Pipeline failed!'
+            echo 'Pipeline failed! Check the console output for errors.'
         }
         always {
-            echo 'Pipeline execution completed.'
+            echo 'Pipeline execution completed. Cleaning up workspace...'
+            sh 'rm -rf deploy || true'
         }
     }
 }
